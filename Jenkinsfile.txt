@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Clone Repo') {
+            steps {
+                git 'https://github.com/BerkyTech/Michaeldjango.git'
+            }
+        }
+
+        stage('Setup Environment') {
+            steps {
+                sh '''
+                cd Michaeldjango
+                python3 -m venv venv || true
+                . venv/bin/activate
+                pip install --upgrade pip
+                pip install -r requirement.txt
+                '''
+            }
+        }
+
+        stage('Migrate DB') {
+            steps {
+                sh '''
+                cd Michaeldjango
+                . venv/bin/activate
+                python manage.py migrate
+                '''
+            }
+        }
+
+        stage('Run Server') {
+            steps {
+                sh '''
+                pkill -f runserver || true
+                cd Michaeldjango
+                nohup venv/bin/python manage.py runserver 0.0.0.0:8000 &
+                '''
+            }
+        }
+    }
+}
