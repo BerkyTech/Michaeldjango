@@ -2,16 +2,19 @@ pipeline {
     agent any
 
     stages {
-        stage('Clone Repo') {
+        stage('Checkout') {
             steps {
-                git 'https://github.com/BerkyTech/Michaeldjango.git'
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    userRemoteConfigs: [[url: 'https://github.com/BerkyTech/Michaeldjango.git']]
+                ])
             }
         }
 
         stage('Setup Environment') {
             steps {
                 sh '''
-                cd Michaeldjango
                 python3 -m venv venv || true
                 . venv/bin/activate
                 pip install --upgrade pip
@@ -23,7 +26,6 @@ pipeline {
         stage('Migrate DB') {
             steps {
                 sh '''
-                cd Michaeldjango
                 . venv/bin/activate
                 python manage.py migrate
                 '''
@@ -33,9 +35,8 @@ pipeline {
         stage('Run Server') {
             steps {
                 sh '''
-                pkill -f runserver || true
-                cd Michaeldjango
-                nohup venv/bin/python manage.py runserver 0.0.0.0:8000 &
+                pkill -f "manage.py runserver 0.0.0.0:8000" || true
+                nohup venv/bin/python manage.py runserver 0.0.0.0:8000 > django.log 2>&1 &
                 '''
             }
         }
