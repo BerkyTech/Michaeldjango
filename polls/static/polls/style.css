@@ -1,8 +1,30 @@
 
 li a {
-    color: green;
+    color:red;
+    text-align: center;
+    align-items: center;
+    gap:20px;
+
 }
 
+
 body {
-    background: white url("images/f1.jpg") no-repeat;
+    background: white url("images/selee.jpg") no-repeat;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    background-size: cover;
+    font-size: larger;
+
+
+
+}
+
+.container {
+    background: rgba(0, 0, 0, 0.55);
+    padding: 20px;
+    border-radius: 12px;
+    width: fit-content;
+    margin: 40px auto;
+    color: white;
+    
 }
